@@ -31,16 +31,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         fooBar()
+        Log.d(TAG, "onCreate: ${Thread.currentThread().name}")
     }
 
     private fun fooBar() {
 
         val list = listOf(1,2,3,4,5,6,7,8,9)
         val observable = Observable.fromIterable(list)
-        observable.subscribe {
-            t ->
-            Log.d(TAG, "fooBar: $t")
-        }
+        compositeDisposable = CompositeDisposable()
+        compositeDisposable.add(
+            observable.observeOn(Schedulers.io()).subscribe {
+                t ->
+            Log.d(TAG, "fooBar: $t  Thread: ${Thread.currentThread().name}")
+        })
     }
 
     private fun foo() {
